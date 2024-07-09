@@ -154,24 +154,16 @@
         <p>For navigation, simply click on any two points on the map to get the trip duration and route information.</p>
     </div>
 
-
     <!-- SET ALL INSTRUCTION INFO BELOW -->
-    <div id="instructions">
+     <div id="instructions">
         <h3>General Info</h3>
-            <p>Current time: 7:17 PM</p>
-            <p>Address of origin: </p>
-            <p>Address of destination: </p>
-            <p>Distance of destination: </p>
-            <p>Estimated travel time to destination: </p>
-            <p>State of charge of battery: </p>
-            <p>Range of current battery: </p>
     </div>
+
 
     <!-- Instructions div displaying general information about the trip -->
     <!--<div id="instructions">
         <h2>General Info</h2>
     </div>--> 
-   
 
     <!-- Log box div displaying user actions and providing a button to copy logs -->
     <div id="log-box">
@@ -205,11 +197,11 @@
         let startPoint = null;
         let endPoint = null;
         let poiMarkers = [];
+        let mapNum = -1; // SET MAP NUMBER    
 
         // Function to add a marker at a specific point on the map
-        /*
         const instructions = [ 
-            { title: "Current time", info: "7:17 PM" }, 
+            { title: "Current time", info: " " }, 
             { title: "Address of origin", info: " " },
             { title: "Address of destination", info: " " },
             { title: "Distance of destination", info: " " },
@@ -217,7 +209,6 @@
             { title: "State of charge of battery", info: " " },
             { title: "Range of current battery", info: " " }
         ];
-        */
 
 
         // Array to store charging station data
@@ -291,6 +282,107 @@
             emoji: '📍'
         };
 
+         /*
+        // Path to the CSV file
+        const csvFilePath = 'logBox.csv';
+
+        // CSV writer setup
+        const csvWriter = createObjectCsvWriter({
+            path: csvFilePath,
+            append: fs.existsSync(csvFilePath), // Append if file exists
+            header: [
+                {id: 'timestamp', title: 'TIMESTAMP'},
+                {id: 'actionType', title: 'ACTION_TYPE'},
+                {id: 'location', title: 'LOCATION'},
+                {id: 'coordinates', title: 'COORDINATES'}
+            ]
+        });
+
+        // Function to log data
+        function logData(actionType, location, coordinates) {
+            const timestamp = new Date().toLocaleString();
+            csvWriter.writeRecords([{ timestamp, actionType, location, coordinates }])
+                .then(() => console.log('Data was added to the CSV file successfully.'));
+            console.log(`Timestamp: ${timestamp}, Action: ${actionType}, Location: ${location}, Coordinates: ${coordinates}`);
+           return;
+        }
+        */
+
+        /*
+        let dataLog = [];
+
+        function logData(actionType, chargingStation, button, coordinates, map) {
+            const entry = {
+                timestamp: new Date().toISOString(),
+                actionType: actionType,
+                chargingStation: chargingStation,
+                button: button,
+                coordinates: coordinates,
+                map: map
+            };
+            dataLog.push(entry);
+            console.log("Data logged:", entry);
+        }
+
+        function downloadCSV(data) {
+            const csvRows = ["timestamp,actionType,chargingStation,button,coordinates,map"];
+            
+            for (const row of data) {
+                csvRows.push(`"${row.timestamp}","${row.actionType}" ,"${row.chargingStation}","${row.button}","${row.coordinates}","${row.map}"`);
+            }
+
+            const csvString = csvRows.join('\n');
+            const blob = new Blob([csvString], { type: 'text/csv' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.setAttribute('hidden', '');
+            a.setAttribute('href', url);
+            a.setAttribute('download', 'logData.csv');
+            a.click();
+            window.URL.revokeObjectURL(url);
+            a.remove();
+        }
+        */
+
+        function getUserIdFromUrl() {
+        const params = new URLSearchParams(window.location.search);
+        return params.get('userId');
+        }
+
+        const userId = getUserIdFromUrl();
+        console.log('User ID:', userId);
+
+        function logData(actionType, chargingStation, button, coordinates, map) {
+        const entry = {
+            userId: userId,
+            timestamp: new Date().toISOString(),
+            actionType: actionType,
+            chargingStation: chargingStation,
+            button: button,
+            coordinates: coordinates,
+            map: map
+        };
+
+        fetch('http://localhost:3000/api/logData', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(entry)
+        })
+        .then(response => {
+            if (!response.ok) {
+                return response.text().then(text => { throw new Error(text) });
+            }
+            return response.json();
+        })
+        .then(data => console.log('Data logged:', data))
+        .catch(error => console.error('Error logging data:', error));
+
+        console.log("Data logged:", entry);
+        }
+
+        /*
         // Function to log user actions in the log box
         function logAction(action) {
             const logBox = document.getElementById('log-box');
@@ -311,9 +403,11 @@
             document.body.removeChild(textarea);
             alert('Logs copied to clipboard');
         }
+           
 
         // Add event listener to the copy button
         document.getElementById('copy-button').addEventListener('click', copyLogs);
+         */
 
         // Function to calculate the distance between two points using the Haversine formula
         function haversineDistance(coords1, coords2) {
@@ -406,7 +500,7 @@
                 .setPopup(popup)
                 .addTo(map);
             window.emojiMarker.getPopup().open();
-            logAction(`Emoji marker added at: ${point.lng}, ${point.lat}`);
+            //logAction(`Emoji marker added at: ${point.lng}, ${point.lat}`);
         }
 
         // Function to add an emoji marker with feedback at a specific point on the map
@@ -430,7 +524,7 @@
                     .addTo(map);
                 window.currentPopup = newPopup;
             }
-            logAction(`Nearby ${poi_type}s added for ${stationName}`);
+            //logAction(`Nearby ${poi_type}s added for ${stationName}`);
         }
 
         // Function to add charging stations to the map
@@ -448,7 +542,7 @@
                     .setPopup(new mapboxgl.Popup({ offset: 25 }).setHTML(popupContent))
                     .addTo(map)
                     .on('click', () => {
-                        logAction(`Charging station clicked: ${station.name}`);
+                        logData(`Station Opened`, station.name, null, station.coordinates, mapNum);
                     });
             });
         }
@@ -482,7 +576,7 @@
 
         // Function to show more information about a charging station
         function showMoreInfo(stationName, infoType, infoContent) {
-            logAction(`Button clicked: ${infoType} for ${stationName}`);
+            logData(`Button Clicked`, `${stationName}`, `${infoType}`,  null, mapNum);
 
             const content = `<p style="font-size: 16px; padding: 5px;">${infoContent}</p>`;
 
@@ -492,23 +586,22 @@
                     <div style="max-height: 500px; max-width: 400px; padding: 10px;">
                         <h3 style="font-size: 20px; margin-top: 0; margin-bottom: 10px;">${stationName}</h3>
                         ${content}
-                        <button class="popup-button" style="font-size: 18px; padding: 10px 20px;" onclick="restoreOriginalContent('${stationName}')">Back</button>
+                        <button class="popup-button" style="font-size: 18px; padding: 10px 20px;" onclick="restoreOriginalContent('${stationName}', '${infoType}')">Back</button>
                     </div>
                 `;
             }
         }
 
         // Function to restore the original content of the popup
-        function restoreOriginalContent(stationName) {
+        function restoreOriginalContent(stationName, infoType) {
             const station = chargingStations.find(station => station.name === stationName);
             const popups = document.getElementsByClassName('mapboxgl-popup-content');
             if (popups.length > 0) {
                 popups[0].innerHTML = generatePopupContent(station);
             }
-            logAction(`Back button clicked for ${stationName}`);
+            logData(`Back Button Clicked`, `${stationName}`, `${infoType}` , null, mapNum);
         }
 
-        /*
         // Function to create instruction buttons
         function createInstructionButtons() {
             const instructionsDiv = document.getElementById('instructions');
@@ -529,7 +622,7 @@
         // Function to show instruction information using the Map Guide popup
         function showInstructionInfo(index) {
             const instruction = instructions[index];
-            logAction(`Button clicked: ${instruction.title}`);
+            logData(`Button Clicked`, null, `${instruction.title}`,  null, mapNum);
 
             const content = `<p style="font-size: 16px; padding: 5px;">${instruction.info}</p>`;
 
@@ -545,7 +638,7 @@
 
         // Function to handle the back button click in the Map Guide popup
         function handleBackButtonClick(title) {
-            logAction(`Back button clicked for ${title}`);
+            logData(`Back Button Clicked`, null, `${title}`,  null, mapNum);
             restoreMapGuide();
         }
 
@@ -567,22 +660,235 @@
         // Call the function to create buttons when the page loads
         createInstructionButtons();
 
-        // Function to fetch and display the time between two points
-        async function getTime(startPoint, endPoint) {
-            if (!startPoint || !endPoint) return;
+        // Function to get the time to travel between two points
+        async function getRouteDetails(startPoint, endPoint) {
+            if (!startPoint || !endPoint) return null;
 
             const query = await fetch(
                 `https://api.mapbox.com/directions/v5/mapbox/driving/${startPoint.lng},${startPoint.lat};${endPoint.lng},${endPoint.lat}?steps=true&geometries=geojson&access_token=${mapboxgl.accessToken}`,
                 { method: 'GET' }
             );
             const json = await query.json();
+            console.log(json); // Log the full response to inspect it
+            if (!json.routes || json.routes.length === 0) {
+                console.error('No route data available');
+                return { time: 0, distance: 0 }; // Return default values in case of no route data
+            }
+            const route = json.routes[0];
+            return {
+                time: Math.floor(route.duration / 60),  // duration in minutes
+                distance: (route.distance / 1000 * 0.621371)  // convert distance from km to miles
+            };
+        }
+      
+        // Function to get the time to travel between two points
+        async function updateChargingStationDetails() {
+            // Extract startPoint and endPoint from the source data
+            const startPoint = {
+                lng: pointSource.data.features[0].geometry.coordinates[0],
+                lat: pointSource.data.features[0].geometry.coordinates[1]
+            };
+            const endPoint = {
+                lng: endpointsource.data.features[0].geometry.coordinates[0],
+                lat: endpointsource.data.features[0].geometry.coordinates[1]
+            };
+
+            for (const station of chargingStations) {
+                const stationPoint = { lat: station.coordinates[1], lng: station.coordinates[0] };
+
+                // Fetch origin to charging station details
+                const originToStation = await getRouteDetails(startPoint, stationPoint);
+                station.originDistance = `${originToStation.distance.toFixed(2)} Miles`;
+                station.originTime = `${originToStation.time} Minutes`;
+
+                // Fetch charging station to destination details
+                const stationToDest = await getRouteDetails(stationPoint, endPoint);
+                station.destDistance = `${stationToDest.distance.toFixed(2)} Miles`;
+                station.destTime = `${stationToDest.time} Minutes`;
+
+                console.log(`Updated station ${station.name} with distance ${station.originDistance} and ${station.destDistance}`);
+            }
+
+        }
+
+        // Function to update route instructions based on the start and end points
+        async function updateAndDisplayRouteInstructions() {
+            const startPoint = {
+                lng: pointSource.data.features[0].geometry.coordinates[0],
+                lat: pointSource.data.features[0].geometry.coordinates[1]
+            };
+
+            const endPoint = {
+                lng: endpointsource.data.features[0].geometry.coordinates[0],
+                lat: endpointsource.data.features[0].geometry.coordinates[1]
+            };
+
+            const routeDetails = await getRouteDetails(startPoint, endPoint);
+
+           /*
+            const query = await fetch(
+                `https://api.mapbox.com/directions/v5/mapbox/driving/${startPoint.lng},${startPoint.lat};${endPoint.lng},${endPoint.lat}?steps=true&geometries=geojson&access_token=${mapboxgl.accessToken}`,
+                { method: 'GET' }
+            );
+            const json = await query.json();
             const data = json.routes[0];
-            return Math.floor(data.duration / 60);
+            const route = data.geometry.coordinates;
+            const geojson = {
+                type: 'Feature',
+                properties: {},
+                geometry: {
+                    type: 'LineString',
+                    coordinates: route
+                }
+            };
+            if (map.getSource('route')) {
+                map.getSource('route').setData(geojson);
+            } else {
+                map.addLayer({
+                    id: 'route',
+                    type: 'line',
+                    source: {
+                        type: 'geojson',
+                        data: geojson
+                    },
+                    layout: {
+                        'line-join': 'round',
+                        'line-cap': 'round'
+                    },
+                    paint: {
+                        'line-color': '#3887be',
+                        'line-width': 5,
+                        'line-opacity': 0.75
+                    }
+                });
+            
+            }
+            // Assuming you have elements with IDs or you can set them in your HTML
+            document.querySelector('#instructions').innerHTML = `
+                <h3>General Info</h3>
+                <p>Current time: </p>
+                <p>Address of origin: </p>
+                <p>Address of destination: </p>
+                <p>Distance of destination: ${routeDetails.distance.toFixed(2)} Miles</p>
+                <p>Estimated travel time to destination: ${routeDetails.time} Minutes</p>
+                <p>State of charge of battery: </p>
+                <p>Range of current battery: </p>
+            `;
+            */
+
+            updateInstructions(routeDetails);
+        }
+
+        // Function to update instructions with route details
+        function updateInstructions(routeDetails) {
+            instructions[3].info = `${routeDetails.distance.toFixed(2)} Miles`;
+            instructions[4].info = `${routeDetails.time} Minutes`;
+        }
+
+        // Function to get the route to travel between any route type
+        async function getRoute(routeType) {
+            console.log(`Get route for type ${routeType}`);
+
+            let startPoint, midPoint, endPoint;
+
+            // Set the start and end points from pointSource and endpointsource as used in case 1
+            startPoint = {
+                lng: pointSource.data.features[0].geometry.coordinates[0],
+                lat: pointSource.data.features[0].geometry.coordinates[1]
+            };
+            endPoint = {
+                lng: endpointsource.data.features[0].geometry.coordinates[0],
+                lat: endpointsource.data.features[0].geometry.coordinates[1]
+            };
+
+            switch (routeType) {
+                case 1:
+                    // Use the first charging station for case 2
+                    midPoint = {
+                        lng: chargingStations[0].coordinates[0],
+                        lat: chargingStations[0].coordinates[1]
+                    };
+                    await fetchAndDisplayRoute(startPoint, midPoint); // Fetch route to charging station
+                    await fetchAndDisplayRoute(midPoint, endPoint);  // Fetch route from charging station to end
+                    break;
+                case 2:
+                    // Use the second charging station for case 3
+                    midPoint = {
+                        lng: chargingStations[1].coordinates[0],
+                        lat: chargingStations[1].coordinates[1]
+                    };
+                    await fetchAndDisplayRoute(startPoint, midPoint); // Fetch route to charging station
+                    await fetchAndDisplayRoute(midPoint, endPoint);  // Fetch route from charging station to end
+                    break;
+                default:
+                    // Direct route from startPoint to endPoint
+                    await fetchAndDisplayRoute(startPoint, endPoint);
+                    return;
+            }
+        }
+
+    
+        // Function to fetch and display a route between two points
+        async function fetchAndDisplayRoute(start, end, routeType) {
+            console.log(`Fetching route from ${start.lng},${start.lat} to ${end.lng},${end.lat}`);
+
+            // Fetch the route data from the Mapbox Directions API
+            const query = await fetch(
+                `https://api.mapbox.com/directions/v5/mapbox/driving/${start.lng},${start.lat};${end.lng},${end.lat}?steps=true&geometries=geojson&access_token=${mapboxgl.accessToken}`,
+                { method: 'GET' }
+            );
+            const json = await query.json();
+            const data = json.routes[0];
+            const route = data.geometry.coordinates;
+            const geojson = {
+                type: 'Feature',
+                properties: {},
+                geometry: {
+                    type: 'LineString',
+                    coordinates: route
+                }
+            };
+
+            // Display the route on the map
+            const routeId = `route-${start.lng}-${start.lat}-${end.lng}-${end.lat}`;
+            if (map.getSource(routeId)) {
+                map.getSource(routeId).setData(geojson);
+            } else {
+                map.addLayer({
+                    id: routeId,
+                    type: 'line',
+                    source: {
+                        type: 'geojson',
+                        data: geojson
+                    },
+                    layout: {
+                        'line-join': 'round',
+                        'line-cap': 'round'
+                    },
+                    paint: {
+                        'line-color': '#3887be',
+                        'line-width': 5,
+                        'line-opacity': 0.75
+                    }
+                });
+            }
+        }
+
+        // Function to remove all route layers from the map
+        function removeRoutes() {
+            // This function will need to remove any route layers added to the map
+            // Example:
+            map.getStyle().layers.forEach(layer => {
+                if (layer.id.startsWith('route-')) {
+                    map.removeLayer(layer.id);
+                    map.removeSource(layer.id);
+                }
+            });
         }
 
         // Function to add points of interest (POIs) to the map
         async function addPOIs(searchTerm, emoji, latitude, longitude, station_name) {
-            logAction(`Adding POIs for ${station_name} - ${searchTerm}`);
+            //logAction(`Adding POIs for ${station_name} - ${searchTerm}`);
 
             const startPoint = { lat: latitude, lng: longitude };
 
@@ -607,13 +913,12 @@
                         <h4>Travel time to ${station_name}: ${duration} min</h4>`))
                     .addTo(map)
                     .on('click', () => {
-                        logAction(`POI clicked: ${feature.text}`);
+                        //logAction(`POI clicked: ${feature.text}`);
                     });
 
                 poiMarkers.push({ marker, coordinates: [lng, lat], logMessage: `Clicked within buffer zone of POI: ${feature.text}` });
             }
         }
-            */
 
         // Define sources for start and end points
         // SET START AND END POINTS BELOW
@@ -655,25 +960,34 @@
             }
         };
 
+        // Add route time/distance to instructions & update charging station details
+        map.on('load', async () => {
+            await getRoute(0); // Ensure this is awaited properly
+            await updateAndDisplayRouteInstructions();  // Ensure this is awaited properly
+            await updateChargingStationDetails();  // Ensure this is awaited properly
+            addChargingStations();  // You might need to re-add stations to reflect updated data
+        });
+
         // Add event listeners to the map after it has loaded
         map.on('load', () => {
             // Event listener for map clicks
             map.on('click', (event) => {
                 const clickCoords = [event.lngLat.lng, event.lngLat.lat];
-                logAction(`Map clicked at coordinates: ${clickCoords}`);
+                logData(`Map Clicked`, null, null, clickCoords, mapNum);
 
-                const bufferRadius = 0.1; // Buffer radius in kilometers
+                const bufferRadius = 1.75; // Buffer radius in kilometers
 
-                if (checkBufferZone(clickCoords, [-122.662323, 45.523751], bufferRadius)) {
-                    logAction(`Clicked within buffer zone of start point`);
-                }
-                if (checkBufferZone(clickCoords, [-122.59626181271541, 45.56511868081539], bufferRadius)) {
-                    logAction(`Clicked within buffer zone of end point`);
+                if(!checkBufferZone(clickCoords, chargingStations[0].coordinates, bufferRadius) && !checkBufferZone(clickCoords, chargingStations[1].coordinates, bufferRadius)) {
+                    removeRoutes();
+                    getRoute(0);
+                    console.log('Current route type set to 0');
                 }
 
                 chargingStations.forEach(station => {
                     if (checkBufferZone(clickCoords, station.coordinates, bufferRadius)) {
-                        logAction(`Clicked within buffer zone of ${station.name}`);
+                        removeRoutes();
+                        getRoute(chargingStations.indexOf(station) + 1);
+                        console.log(`Clicked within buffer zone of ${station.name}`);
                     }
                 });
 
@@ -698,6 +1012,7 @@
                 // }
             });
 
+            /*
             // Event listener for start marker clicks
             startMarker.getElement().addEventListener('click', () => {
                 logAction(`Start marker clicked at: ${startMarker.getLngLat()}`);
@@ -707,6 +1022,7 @@
             endMarker.getElement().addEventListener('click', () => {
                 logAction(`End marker clicked at: ${endMarker.getLngLat()}`);
             });
+            */
 
             // Add charging stations to the map
             addChargingStations();
