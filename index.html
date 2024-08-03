@@ -206,20 +206,20 @@
         let startPoint = null;
         let endPoint = null;
         let poiMarkers = [];
-        let mapNum = -1; // SET MAP NUMBER    
+        let mapNum = 40; // SET MAP NUMBER    
 
         // Function to add a marker at a specific point on the map
         const instructions = [
-            { title: "Current Time", info: " " },
-            { title: "Address of Origin", info: " " },
-            { title: "Address of Destination", info: " " },
+            { title: "Current Time", info: "8:35 AM" },
+            { title: "Address of Origin", info: "5108 Drawbridge Ct, Royersford, PA 19468" },
+            { title: "Address of Destination", info: "2211 Chapel Ave W Suite 101, Cherry Hill, NJ 08002" },
             { title: "Distance of Destination", info: "0" },
             { title: "Estimated Time to Destination", info: "0" },
-            { title: "State of Charge of Battery", info: "0 Charge" },
-            { title: "Range of Current Battery", info: "0 Minutes" },
-            { title: "Estimated Drive-distance with Current Charge", info: "0 Miles" },
+            { title: "State of Charge of Battery", info: "26% Charge" },
+            { title: "Range of Current Battery", info: "78 Minutes" },
+            { title: "Estimated Drive-distance with Current Charge", info: "58.5 Miles" },
             { title: "Type of Chargin Socket", info: "J1772" },
-            { title: "kW Needed to Fully Charge Your Car", info: "0 kW" }
+            { title: "kW Needed to Fully Charge Your Car", info: "44.4 kW" }
         ];
 
 
@@ -244,13 +244,13 @@
                         { type: 'J1772', value: '6' }
                     ],    
                 chargeTime: [
-                        { type: 'J1772', value: '' }
+                        { type: 'J1772', value: '410' }
                     ],
                 socketAvalability: [
                         { type: 'J1772', value: '0 available' }
                     ],
 
-                energySource: 'Energy Breakdown: 0% Grid, 0% Renewable',
+                energySource: 'Energy Breakdown: 38% Grid, 62% Renewable',
 
                 chargingFee: '$0.00',
                 chargingFeeRate: 'per kWh',
@@ -261,8 +261,8 @@
                 grocery: 'Yes <br><br> There is a grocery store in walking distance... 0 mile',
                 sportsClothes: 'Yes <br><br> There is a sports or clothing store in walking distance... 0 miles',
                 
-                rating: '★ ✰ ',
-                ratingNum: ''
+                rating: '★ ✰ ✰ ✰ ✰',
+                ratingNum: '155'
             },
             {
                 coordinates: [-75.145357, 39.954078],
@@ -287,9 +287,9 @@
                         { type: 'Wall', value: '1' }
                     ],
                 chargeTime: [
-                        { type: 'J1772', value: '' },
-                        { type: 'NEMA 14-50', value: '' },
-                        { type: 'Wall', value: '0' }
+                        { type: 'J1772', value: 'Unknown' },
+                        { type: 'NEMA 14-50', value: 'Unknown' },
+                        { type: 'Wall', value: 'Unknown' }
                     ],
                 socketAvalability: [
                         { type: 'J1772', value: '1 available' },
@@ -297,7 +297,7 @@
                         { type: 'Wall', value: '1 available' }
                     ],        
 
-                energySource: 'Energy Breakdown: 0% Grid, 0% Renewable',
+                energySource: 'Energy Breakdown: 39% Grid, 61% Renewable',
 
                 chargingFee: '$0.35',
                 chargingFeeRate: 'per kWh',
@@ -309,8 +309,8 @@
                 grocery: 'Yes  <br><br> There is a grocery store in walking distance... 0 miles',
                 sportsClothes: 'Yes <br><br> There is a sports or clothing store in walking distance... 0 miles',
                 
-                rating: '★ ✰',  
-                ratingNum: '0'
+                rating: '★ ★ ★ ★ ★ ',  
+                ratingNum: '16'
             }
         ];
 
@@ -891,7 +891,7 @@
                         },
                         geometry: {
                             type: 'Point',
-                            coordinates: [-75.01644140544582,39.926937544379854]
+                            coordinates: [-75.53236206307785,40.227161771297375]
                         }
                     }
                 ]
@@ -910,7 +910,7 @@
                         },
                         geometry: {
                             type: 'Point',
-                            coordinates: [-75.53236206307785,40.227161771297375]
+                            coordinates: [-75.01644140544582,39.926937544379854]
                         }
                     }
                 ]
