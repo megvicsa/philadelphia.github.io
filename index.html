@@ -215,9 +215,9 @@
             { title: "Address of Destination", info: "2211 Chapel Ave W Suite 101, Cherry Hill, NJ 08002." },
             { title: "Distance of Destination", info: "0" },
             { title: "Estimated Time to Destination", info: "0" },
-            { title: "State of Charge of Battery", info: "26% Charge." },
-            { title: "Range of Current Battery", info: "78 Minutes." },
-            { title: "Estimated Drive-distance with Current Charge", info: "58.5 Miles." },
+            { title: "State of Charge of Battery", info: "26% charge." },
+            { title: "Range of Current Battery", info: "78 minutes." },
+            { title: "Estimated Drive Distance with Current Charge", info: "58.5 miles." },
             { title: "Type of Chargin Socket", info: "J1772." },
             { title: "kW Needed to Fully Charge Your Car", info: "44.4 kW." }
         ];
@@ -247,19 +247,19 @@
                         { type: 'J1772', value: '410' }
                     ],
                 socketAvalability: [
-                        { type: 'J1772', value: '0 available' }
+                        { type: 'J1772', value: '0' }
                     ],
 
                 energySource: '38% Grid, 62% Renewable',
 
                 chargingFee: '$0.00',
                 chargingFeeRate: 'per kWh',
-                parkingFee: 'free',
+                parkingFee: '$0.00',
                 parkingFeeRate: 'for any amount of time',
 
-                coffee: 'Yes <br><br> There is a coffee shop in walking distance 0.9 miles away.',
-                grocery: 'Yes <br><br> There is a grocery store in walking distance 0.9 miles away.',
-                sportsClothes: 'Yes <br><br> There is a sports or clothing store in walking distance 1.7 miles away.',
+                coffee: 'Yes. <br><br> There is a coffee shop in walking distance 0.9 miles away.',
+                grocery: 'Yes. <br><br> There is a grocery store in walking distance 0.9 miles away.',
+                sportsClothes: 'Yes. <br><br> There is a sports or clothing store in walking distance 1.7 miles away.',
                 
                 rating: '★ ✰ ✰ ✰ ✰',
                 ratingNum: '155'
@@ -287,14 +287,14 @@
                         { type: 'Wall', value: '1' }
                     ],
                 chargeTime: [
-                        { type: 'J1772', value: 'Unknown' },
-                        { type: 'NEMA 14-50', value: 'Unknown' },
-                        { type: 'Wall', value: 'Unknown' }
+                        { type: 'J1772', value: '410' },
+                        { type: 'NEMA 14-50', value: '410' },
+                        { type: 'Wall', value: '410' }
                     ],
                 socketAvalability: [
-                        { type: 'J1772', value: '1 available' },
-                        { type: 'NEMA 14-50', value: '1 available' },
-                        { type: 'Wall', value: '1 available' }
+                        { type: 'J1772', value: '1' },
+                        { type: 'NEMA 14-50', value: '1' },
+                        { type: 'Wall', value: '1' }
                     ],        
 
                 energySource: '39% Grid, 61% Renewable',
@@ -305,8 +305,8 @@
                 parkingFee: '$15',
                 parkingFeeRate: 'for up to eight hours',
 
-                coffee: 'Yes <br><br> There is a coffee shop in walking distance 0.05 miles away.',
-                grocery: 'Yes <br><br> There is a grocery store in walking distance 0.1 miles away.',
+                coffee: 'Yes. <br><br> There is a coffee shop in walking distance 0.05 miles away.',
+                grocery: 'Yes. <br><br> There is a grocery store in walking distance 0.1 miles away.',
                 sportsClothes: 'Yes <br><br> There is a sports or clothing store in walking distance 0.7 miles away.',
                 
                 rating: '★ ★ ★ ★ ★ ',  
@@ -591,7 +591,7 @@
             content = `<p style="font-size: 16px; padding: 5px;">${infoContent}</p>`;
 
             if (infoType === 'rating') {
-                content = `<p style="font-size: 16px; padding: 5px;"><span class="stars">${station.rating}</span> <br><br> There are ${station.ratingNum} total reviews</p>`;
+                content = `<p style="font-size: 16px; padding: 5px;"><b>Rating:</b><br><span class="stars">${station.rating}</span> <br><br> There are ${station.ratingNum} total reviews.</p>`;
                 console.log('Rating clicked');
             }
 
